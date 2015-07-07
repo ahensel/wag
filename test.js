@@ -1,37 +1,36 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
+const _ = require('lodash');
 const estimator = require('./estimator.js');
 var comparisons = 0;
 
-const actuals = yaml.load(fs.readFileSync('sample.yaml'));
+var actuals = yaml.load(fs.readFileSync('sample.yaml'));
 
-var estimates = estimator.estimate(actuals, compare);
-
-var rms = calculate_rms(actuals, estimates);
-
-if (rms < 0) {
-  process.exit(1);
+const tries = 10000;
+var rms_sum = 0;
+for (var i=0; i<tries; i++) {
+  actuals = _.shuffle(actuals);
+  var estimates = estimator.estimate(actuals, compare);
+  rms_sum += calculate_rms(actuals, estimates);
 }
+var rms_average = rms_sum / tries;
 
-console.log("RMS: " + rms + " in " + comparisons + " comparisons for " + actuals.length + " artifacts");
+console.log("RMS: " + rms_average + " in " + comparisons/tries + " comparisons for " + actuals.length + " artifacts averaged over " + tries + " tries");
 
 //--------------------------------------------------------------------------------------------
-const phi = (Math.sqrt(5) + 1) / 2;
-const GREATER_THAN = 1;
-const LESS_THAN = -1;
-const ABOUT_EQUAL = 0;
 
 function compare(a, b) {
-  comparisons ++;
+  comparisons++;
+  const phi = (Math.sqrt(5) + 1) / 2;
 
   var ratio = a.actual / b.actual;  // estimator knows NOTHING about these actuals... they are part of the test harness
   if (ratio > phi) {
-    return GREATER_THAN;
+    return 1;
   }
   if (ratio < 1/phi) {
-    return LESS_THAN;
+    return -1;
   }
-  return ABOUT_EQUAL;
+  return 0;
 }
 
 //--------------------------------------------------------------------------------------------
