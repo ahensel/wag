@@ -17,5 +17,4 @@ Run tests:
 ```
   node test.js
 ```
-The tests calculate the root-mean-squared of the results as compared to sample inputs. Worst-case RMS is 7.0027.
-Anything below 7 is good. Anything above 7 is worse than no estimation at all.
+The tests calculate the root-mean-squared of the results as compared to sample inputs. Worst-case RMS for our current data set is 7.0027, based on not estimating (setting all estimates to the same size). Lower is better. 0 can only be achieved by cheating. 2.83 is the best fit for our current data set while sizing to nearest fibonacci numbers. How low can we go?
