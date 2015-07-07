@@ -10,12 +10,12 @@ So let's build something that makes sizing painless and FAST so we can stop wast
 Based on node 0.10.35 and npm 2.7.5.
 
 Be sure to:
-
+```
   npm install js-yaml
-
+```
 Run tests:
-
+```
   node test.js
-
+```
 The tests calculate the root-mean-squared of the results as compared to sample inputs. Worst-case RMS is 7.0027.
 Anything below 7 is good. Anything above 7 is worse than no estimation at all.
