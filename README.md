@@ -12,6 +12,7 @@ Based on node 0.10.35 and npm 2.7.5.
 Be sure to:
 ```
   npm install js-yaml
+  npm install lodash
 ```
 Run tests:
 ```
