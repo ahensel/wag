@@ -5,18 +5,18 @@ function estimate(artifacts, compare) {
   //return _cheatToNearestFibonacci(artifacts, compare);
   //return _allSameSize(artifacts, compare);
   //return _3fixedBucketsFirstInMiddle(artifacts, compare);
-  return _max7FlexibleBuckets(artifacts, compare);
+  return _flexibleBuckets(artifacts, compare);
 }
 
-// This is a 7-bucket solution, where all artifacts are binary-insertion sorted into a list that is not
-// allowed to exceed 7 buckets. Result is about 3.55 with our current data set.
-function _max7FlexibleBuckets(artifacts, compare) {
+// This is the flexible bucket solution, where all artifacts are binary-insertion sorted into a list
+// Result is about 2.82 with our current data set.
+function _flexibleBuckets(artifacts, compare) {
   var buckets = [[artifacts[0]]];
 
   for (var i = 1; i < artifacts.length; i++) {
     var artifact = artifacts[i];
 
-    _insertIntoBuckets(buckets, artifact, 1000, compare);
+    _insertIntoBuckets(buckets, artifact, compare);
   }
 
   _logBuckets(buckets);
@@ -33,20 +33,12 @@ function _logBuckets(buckets) {
   }
 }
 
-function _insertIntoBuckets(buckets, artifact, maxBuckets, compare) {
-  _insertIntoBucketsRecursive(buckets, artifact, maxBuckets, compare, 0, buckets.length);
+function _insertIntoBuckets(buckets, artifact, compare) {
+  _insertIntoBucketsRecursive(buckets, artifact, compare, 0, buckets.length);
 }
 
-function _insertIntoBucketsRecursive(buckets, artifact, maxBuckets, compare, considerationStart, considerationLength) {
-
-  //console.log(JSON.stringify(buckets));
-
+function _insertIntoBucketsRecursive(buckets, artifact, compare, considerationStart, considerationLength) {
   var middleBucketIndex = (considerationStart + Math.floor(considerationLength / 2));
-
-  //console.log("#### inserting " + artifact.name + " value " + artifact.actual +
-  //  " at " + middleBucketIndex +
-  //  " from " + considerationStart + " for " + considerationLength + " of " + buckets.length + " buckets");
-
 
   var comparisonResult = compare(artifact, buckets[middleBucketIndex][0]);
   if (comparisonResult === 0) {
@@ -54,41 +46,31 @@ function _insertIntoBucketsRecursive(buckets, artifact, maxBuckets, compare, con
   }
   else if (comparisonResult === 1) {
     if (considerationLength < 2) {  // insert
-      if (buckets.length < maxBuckets) {  // new bucket to the right
-        buckets.splice(middleBucketIndex + 1, 0, [artifact]);
-      }
-      else {  // give up, no new buckets
-        buckets[middleBucketIndex].push(artifact);
-      }
+      buckets.splice(middleBucketIndex + 1, 0, [artifact]);
     }
-    else {  // recurse -- more cases to consider
+    else {
       var newStart = middleBucketIndex + 1;
       var rightLength = considerationStart + considerationLength - middleBucketIndex - 1;
-      if (rightLength === 0) {
+      if (rightLength === 0) {  // on right edge
         buckets.splice(middleBucketIndex + 1, 0, [artifact]);
       }
-      else {
-        _insertIntoBucketsRecursive(buckets, artifact, maxBuckets, compare, newStart, rightLength);
+      else { // recurse -- more cases to consider
+        _insertIntoBucketsRecursive(buckets, artifact, compare, newStart, rightLength);
       }
     }
   }
   else if (comparisonResult === -1) {
     if (considerationLength < 2) {  // insert
-      if (buckets.length < maxBuckets) {  // new bucket to the left
-        buckets.splice(middleBucketIndex, 0, [artifact]);
-      }
-      else {  // give up, no new buckets
-        buckets[middleBucketIndex].push(artifact);
-      }
+      buckets.splice(middleBucketIndex, 0, [artifact]);
     }
-    else {  // recurse -- more cases to consider
+    else {
       var newStart = considerationStart;
       var leftLength = middleBucketIndex - considerationStart;
-      if (leftLength === 0) {
+      if (leftLength === 0) {  // on left edge
         buckets.splice(middleBucketIndex, 0, [artifact]);
       }
-      else {
-        _insertIntoBucketsRecursive(buckets, artifact, maxBuckets, compare, newStart, leftLength);
+      else {  // recurse -- more cases to consider
+        _insertIntoBucketsRecursive(buckets, artifact, compare, newStart, leftLength);
       }
     }
   }
@@ -96,7 +78,7 @@ function _insertIntoBucketsRecursive(buckets, artifact, maxBuckets, compare, con
 
 
 // This is a 3-bucket solution, where all artifacts are compared to the first one, and then
-// estimated as a "1" for small, "2" for medium, and "3" for large. Result is about 4.3 with our current data set.
+// estimated as a "1" for small, "2" for medium, and "3" for large. Result is about 4.03 with our current data set.
 function _3fixedBucketsFirstInMiddle(artifacts, compare) {
   var buckets = [[], [artifacts[0]], []];
 

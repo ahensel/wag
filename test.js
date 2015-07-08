@@ -6,7 +6,7 @@ var comparisons = 0;
 
 var actuals = yaml.load(fs.readFileSync('sample.yaml'));
 
-const tries = 1;
+const tries = 100000;
 var rms_sum = 0;
 for (var i=0; i<tries; i++) {
   actuals = _.shuffle(actuals);
