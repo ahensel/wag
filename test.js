@@ -6,7 +6,7 @@ var comparisons = 0;
 
 var actuals = yaml.load(fs.readFileSync('sample.yaml'));
 
-const tries = 10000;
+const tries = 1;
 var rms_sum = 0;
 for (var i=0; i<tries; i++) {
   actuals = _.shuffle(actuals);
@@ -21,13 +21,13 @@ console.log("RMS: " + rms_average + " in " + comparisons/tries + " comparisons f
 
 function compare(a, b) {
   comparisons++;
-  const phi = (Math.sqrt(5) + 1) / 2;
+  const targetRatio = 1.4;
 
   var ratio = a.actual / b.actual;  // estimator knows NOTHING about these actuals... they are part of the test harness
-  if (ratio > phi) {
+  if (ratio > targetRatio) {
     return 1;
   }
-  if (ratio < 1/phi) {
+  if (ratio < 1/targetRatio) {
     return -1;
   }
   return 0;

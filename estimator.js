@@ -16,15 +16,21 @@ function _max7FlexibleBuckets(artifacts, compare) {
   for (var i = 1; i < artifacts.length; i++) {
     var artifact = artifacts[i];
 
-    _insertIntoBuckets(buckets, artifact, 7, compare);
+    _insertIntoBuckets(buckets, artifact, 1000, compare);
   }
 
-  //for (var b = 1; b < buckets.length; b++) {
-  //  console.log(JSON.stringify(buckets[b]));
-  //  console.log("-");
-  //}
+  _logBuckets(buckets);
 
   return _spread(buckets);
+}
+
+function _logBuckets(buckets) {
+  console.log("Number of buckets: " + buckets.length);
+  console.log("----------------------------");
+  for (var b = 0; b < buckets.length; b++) {
+    console.log(fibonaccis[b] + ": " + JSON.stringify(_.pluck(buckets[b], 'actual')));
+    console.log("-");
+  }
 }
 
 function _insertIntoBuckets(buckets, artifact, maxBuckets, compare) {
